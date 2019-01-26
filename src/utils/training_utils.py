@@ -11,7 +11,7 @@ from src.models.image import Image
 from src.utils.image_utils import is_image_file
 
 EXTRACT_PATH_REGEX = re.compile(
-    r'^(n(?P<id>\d+)-(?P<breed>\w+))$',
+    r'^((?P<id>\w+)-(?P<breed>\w+))$',
     re.IGNORECASE)
 
 
@@ -86,7 +86,7 @@ def load_breeds() -> List[str]:
     breed_paths = listdir(TRAIN_PATH)
     for path in breed_paths:
         if isdir(join(TRAIN_PATH, path)) and EXTRACT_PATH_REGEX.match(path):
-            path_id, path_breed = split_path_name(path)
+            _, path_breed = split_path_name(path)
             breeds.append(path_breed)
     return breeds
 

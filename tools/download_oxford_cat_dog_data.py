@@ -27,7 +27,8 @@ if not exists(oxford_extracted_data_default_folder) and not exists(oxford_extrac
     filename, headers = urlretrieve(DOG_CAT_DATA_URL, oxford_data_targzfile)
 else:
     print(
-        "Folders or files with names " + TRAIN_PATH_FOLDER_NAME + "/" + targzfile_internal_folder_name + " already exists, please delete them to run this script.")
+        "Folders or files with names " + TRAIN_PATH_FOLDER_NAME + "/" + targzfile_internal_folder_name +
+        " already exists, please delete them to run this script.")
 
 # Extract data into folder
 file = tarfile.open(name=oxford_data_targzfile)
@@ -37,7 +38,7 @@ remove(path=oxford_data_targzfile)
 files = listdir(oxford_extracted_data_default_folder)
 
 filename_regex = re.compile(
-    r'^(n(?P<breed>\w+)_(?P<id>\d+))$',
+    r'^((?P<breed>\w+)_(?P<id>\d+))$',
     re.IGNORECASE)
 
 breed_path_dictionary = {}
