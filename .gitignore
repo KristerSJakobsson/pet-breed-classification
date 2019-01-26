@@ -1,3 +1,9 @@
+### Project specific
+output/classifiers/
+resources/
+
+### General:
+
 .idea/
 
 ### Linux ###

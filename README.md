@@ -1,13 +1,39 @@
 # Pet Breed Classifier
 
+Ever wondered what dog breed you resemble the most?<br>
 This is a Python implementation of a pet breed classifier.
 It uses transfer learning from Deep Neural Networks that were trained on Imagenet.
 A logistic regression is used to map the final layer.
+<br>
+The model can be set to use xception, inception or bost for generating bottleneck features.
+Running this program on all data might be quite slow, consider tweaking the training proportion parameter when running.
 
 ## Getting Started
 
-The program can be executed as a script from console.
+The executable scripts are per below:
 
+* **tools/download_stanford_dog_data.py** - Download Stanford Dog Data<br>
+Run this to download the data, extract it and store it for usage.<br>
+
+* **scripts/train_classifier.py** - Train a classifier with set parameters and store it for reuse.<br>
+Classifiers are stored in output/classifiers/[classifier_name].<br>
+Warning: Depending on your computer, this may take a while.<br>
+
+* **scripts/validate_classifier.py** - Validate the trained classifier. <br>
+For this to be executable, the training_proportion of the specified classifier must be strictly less than 1 and low enough that at least one picture remains in the training set.
+
+* **scripts/analyse_classifier.py** - Apply classifier to a file or folder and store results. <br>
+Can only be used if the classifier has training proportion set to <1. <br> 
+Results are stored in output/classifiers/[classifier_name].<br>
+Warning: Depending on your computer, this may take a while.<br>
+Run with -h or --help for all arguments and parameters.
+
+* **scripts/plot_analyser_results.py** - Use stored evaluation result and generate plots. <br>
+Results are stored in output/classifiers/[classifier_name].<br>
+Run with -h or --help for all arguments and parameters.
+
+
+Note: For tensorflow GPU support, change tensorflow to tensorflow-gpu in requirements.txt
 
 ### Prerequisites
 
