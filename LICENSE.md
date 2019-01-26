@@ -1,4 +1,4 @@
-cppsolnp makes use of software components under the following license:
+pet-breed-classification makes use of software components under the following license:
 
 Boost Software License - Version 1.0 - August 17th, 2003
 

@@ -5,7 +5,7 @@ This is a Python implementation of a pet breed classifier.
 It uses transfer learning from Deep Neural Networks that were trained on Imagenet.
 A logistic regression is used to map the final layer.
 <br>
-The model can be set to use xception, inception or bost for generating bottleneck features.
+The model can be set to use xception, inception or both for generating bottleneck features.
 Running this program on all data might be quite slow, consider tweaking the training proportion parameter when running.
 
 ## Getting Started
