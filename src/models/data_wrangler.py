@@ -79,7 +79,7 @@ class DataWrangler:
 
         # Fix the order to match breed list
         column_order = [table_column_prefix + "_" + breed for breed in breeds_list]
-        classification_pivot = classification_pivot.reindex(labels=column_order, axis=1)
+        classification_pivot = classification_pivot.reindex(labels=column_order, axis='columns', fill_value=0)
 
         x_training_data = self._load_and_preprocess_data(file_paths)
         y_training_data = classification_pivot.values

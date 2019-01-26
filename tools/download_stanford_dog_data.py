@@ -30,7 +30,7 @@ else:
         "Folders or files with names " + TRAIN_PATH_FOLDER_NAME + "/" + tarfile_internal_folder_name + "already exists, please delete them to run this script.")
 
 # Extract data into folder
-file = tarfile.open(stanford_data_tarfile)
+file = tarfile.open(name=stanford_data_tarfile)
 file.extractall(path=RESOURCES_PATH)
-move(stanford_extracted_data_default_folder, stanford_extracted_data_final_folder)
-remove(stanford_data_tarfile)
+move(src=stanford_extracted_data_default_folder, dst=stanford_extracted_data_final_folder)
+remove(path=stanford_data_tarfile)

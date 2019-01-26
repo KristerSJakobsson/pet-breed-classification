@@ -2,24 +2,30 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
+from typing import List
 from sklearn.metrics import log_loss, accuracy_score
 
 from settings import *
 
 from src.models.data_wrangler import DataWrangler
 from src.models.logreg_classifier import ExistingClassifier
-from src.models.containers import ClassifierDetails
+from src.models.containers import ClassifierDetails, ClassifierResult
 from src.utils.image_utils import create_image_figure
 from src.utils.io_utils import store_dataframe, load_dataframe, load_serializable_object, store_figure
 
 
 def validate_classifier(classifier_details: ClassifierDetails):
+    """
+    Runs the validation logic for this classifier
+    :param classifier_details: The classifier used
+    """
     breeds_list = classifier_details.training_breed_names
     classifier_name = classifier_details.get_name()
 
     # Load validation resources in classifier
     validation_data = load_serializable_object(filename=VALIDATION_DATA_FILE_NAME, classifier_name=classifier_name)
-    if len(validation_data) <= 0:
+    validation_data_samples = int(len(validation_data))
+    if validation_data_samples <= 0:
         raise ValueError(
             "Tried to execute validation on a classifier without validation resources.")
 
@@ -35,38 +41,69 @@ def validate_classifier(classifier_details: ClassifierDetails):
     validation_labels = data_wrangler.file_labels
 
     classifier_result = machine_learner.apply_to_stored_learner(x_validation_data, validation_labels)
-    image_list = classifier_result.image_list
 
-    # ------------------- Store validation predictions and probabilities ---------------------
+    store_predictions(classifier_name, classifier_result)
+    store_probabilities(classifier_name, classifier_result)
+    store_answers(classifier_name, breeds_list, y_validation_data, classifier_result)
+    store_metrics(classifier_name, validation_data_samples, y_validation_data, classifier_result)
+
+
+def store_predictions(classifier_name: str, classifier_result: ClassifierResult):
+    """
+    Store predications for the valiation
+    """
     predictions = classifier_result.get_prediction()
-
     store_dataframe(predictions, classifier_name, VALIDATION_PREDICTIONS_FILE_NAME)
 
-    probabilities = classifier_result.get_probability()
 
+def store_probabilities(classifier_name: str, classifier_result: ClassifierResult):
+    """
+    Store probabilities for the validation
+    """
+    probabilities = classifier_result.get_probability()
     store_dataframe(probabilities, classifier_name, VALIDATION_PROBABILITIES_FILE_NAME)
 
-    # ------------------- Store correct labels ---------------------
-    correct_breeds = (y_validation_data * range(y_validation_data.shape[1])).sum(axis=1)
 
-    answers = pd.DataFrame(data=[breeds_list[i.astype(int)] for i in correct_breeds],
+def store_answers(classifier_name: str, breeds_list: List[str], y_validation_data: np.ndarray,
+                  classifier_result: ClassifierResult):
+    """
+    Stores answers for the validation
+    """
+    number_of_breeds = y_validation_data.shape[1]
+    dataframe_with_index_encoding = y_validation_data * range(number_of_breeds)
+    image_list = classifier_result.image_list
+
+    correct_breeds_indexed = dataframe_with_index_encoding.sum(axis=1)
+    correct_breeds_data = [breeds_list[index.astype(int)] for index in correct_breeds_indexed]
+
+    answers = pd.DataFrame(data=correct_breeds_data,
                            index=image_list,
                            columns=['answer'])
 
     store_dataframe(answers, classifier_name, VALIDATION_ANSWERS_FILE_NAME)
 
-    # ------------------- Store metrics ---------------------
-    data_size = int(len(validation_data))
-    logarithmic_loss = log_loss(y_validation_data, classifier_result.probability_ndarray)
-    score = accuracy_score((y_validation_data * range(len(breeds_list))).sum(axis=1), classifier_result.prediction_ndarray)
 
-    metrics = pd.DataFrame(data=[data_size, logarithmic_loss, score], columns=["value"],
+def store_metrics(classifier_name: str, validation_data_samples: int, y_validation_data: np.ndarray,
+                  classifier_result: ClassifierResult):
+    """
+    Stores metrics for the validation
+    """
+    number_of_breeds = y_validation_data.shape[1]
+    logarithmic_loss = log_loss(y_validation_data, classifier_result.probability_ndarray)
+    score = accuracy_score((y_validation_data * range(number_of_breeds)).sum(axis=1),
+                           classifier_result.prediction_ndarray)
+
+    metrics = pd.DataFrame(data=[validation_data_samples, logarithmic_loss, score], columns=["value"],
                            index=["Data Records", "Logarithmic Loss", "Accuracy Score"])
 
     store_dataframe(metrics, classifier_name, VALIDATION_METRICS_FILE_NAME)
 
 
-def plot_validation_graphs_and_images(classifier_details: ClassifierDetails):
+def plot_validation_result_graph_and_tagged_images(classifier_details: ClassifierDetails):
+    """
+    Plots the validation results
+    :param classifier_details: The classifier used
+    """
     classifier_name = classifier_details.get_name()
 
     # Load validation resources in classifier
@@ -78,7 +115,8 @@ def plot_validation_graphs_and_images(classifier_details: ClassifierDetails):
 
     predictions = load_dataframe(classifier_name, VALIDATION_PREDICTIONS_FILE_NAME)
     answers = load_dataframe(classifier_name, VALIDATION_ANSWERS_FILE_NAME)
-    classifier_details = load_serializable_object(classifier_name=classifier_name, filename=LEARNER_DATA_FILE_NAME)
+    classifier_details = load_serializable_object(classifier_name=classifier_name,
+                                                  filename=TRAINING_CLASSIFIER_DATA_FILE_NAME)
 
     predictions_and_answers = pd.merge(left=answers, right=predictions, left_index=True, right_index=True)
     breeds = classifier_details.training_breed_names
@@ -105,15 +143,12 @@ def plot_validation_graphs_and_images(classifier_details: ClassifierDetails):
     # Set diagonal to 0
     heat_matrix.values[[np.arange(len(breeds))] * 2] = 0
 
-    # Path where we save heatmap & clustermap
-    maps_file_path = "validate_maps"
-
     # Heatmap
     plt.subplots(figsize=(20, 20))
     heatmap = sns.heatmap(heat_matrix, cbar=True, center=0, cmap="vlag", fmt="d", linewidths=.75, annot=True)
     heatmap.set(xlabel='Predicted', ylabel='Actual')
-    store_figure(heatmap.get_figure(), classifier_name, maps_file_path,
-                 VALIDATION_INCORRECT_PREDICTION_HEATMAP_PLOT_FILE_NAME)
+    store_figure(heatmap.get_figure(), classifier_name, RESULTS_GRAPH_FOLDER,
+                 INCORRECT_PREDICTION_HEATMAP_PLOT_FILE_NAME)
     plt.show()
 
     # Remove rows and columns with only 0 values (no mismatch)
@@ -122,11 +157,8 @@ def plot_validation_graphs_and_images(classifier_details: ClassifierDetails):
 
     clustermap = sns.clustermap(heat_matrix, center=0, cmap="vlag",
                                 linewidths=.75, row_cluster=True, col_cluster=True, figsize=(20, 20))
-    store_figure(clustermap, classifier_name, maps_file_path, VALIDATION_INCORRECT_PREDICTION_CLUSTERMAP_PLOT_FILE_NAME)
-    plt.show()
-
-    incorrect_image_file_path = "validate_incorrectly_labeled"
-    correct_image_file_path = "validate_correctly_labeled"
+    store_figure(clustermap, classifier_name, RESULTS_GRAPH_FOLDER,
+                 INCORRECT_PREDICTION_CLUSTERMAP_PLOT_FILE_NAME)
 
     incorrect_prediction_probabilities = []
     correct_prediction_probabilities = []
@@ -144,7 +176,7 @@ def plot_validation_graphs_and_images(classifier_details: ClassifierDetails):
             fig = create_image_figure(image_path=image_path, predicted_breed=predicted_breed,
                                       predicted_confidence=predicted_confidence, actual_breed=actual_breed)
             file_name = actual_breed + '_mistaken_for_' + predicted_breed + '_' + image_id + '.png'
-            store_figure(fig, classifier_name, incorrect_image_file_path, file_name)
+            store_figure(fig, classifier_name, VALIDATION_RESULTS_INCORRECT_IMAGE_FOLDER, file_name)
             plt.close(fig)
         else:
             correct_prediction_probabilities.append(predicted_confidence)
@@ -153,30 +185,15 @@ def plot_validation_graphs_and_images(classifier_details: ClassifierDetails):
             fig = create_image_figure(image_path=image_path, predicted_breed=predicted_breed,
                                       predicted_confidence=predicted_confidence)
             file_name = predicted_breed + '_' + image_id + '.png'
-            store_figure(fig, classifier_name, correct_image_file_path, file_name)
+            store_figure(fig, classifier_name, VALIDATION_RESULTS_CORRECT_IMAGE_FOLDER, file_name)
             plt.close(fig)
 
-    distribution_plot = sns.distplot(correct_prediction_probabilities, kde=False, rug=True, axlabel="ラベル推定確率")
-    distribution_plot.set_title("正解ラベルデータ確率分布")
-    store_figure(distribution_plot.get_figure(), classifier_name, maps_file_path,
-                 VALIDATION_CORRECT_PREDICTION_DISTRIBUTION_PLOT_FILE_NAME)
+    distribution_plot = sns.distplot(correct_prediction_probabilities, kde=False, rug=True, axlabel="Probability")
+    distribution_plot.set_title("Correctly labeled data distribution")
+    store_figure(distribution_plot.get_figure(), classifier_name, RESULTS_GRAPH_FOLDER,
+                 CORRECT_PREDICTION_DISTRIBUTION_PLOT_FILE_NAME)
 
-    plt.show()
-
-    distribution_plot = sns.distplot(incorrect_prediction_probabilities, kde=False, rug=True, axlabel="ラベル推定確率")
-    distribution_plot.set_title("不正解ラベルデータ確率分布")
-    store_figure(distribution_plot.get_figure(), classifier_name, maps_file_path,
-                 VALIDATION_INCORRECT_PREDICTION_DISTRIBUTION_PLOT_FILE_NAME)
-    plt.show()
-
-    confidence_level = 0.9
-
-    confident_incorrect_count = len([x for x in incorrect_prediction_probabilities if x > confidence_level])
-    confident_correct_count = len([x for x in correct_prediction_probabilities if x > confidence_level])
-    confident_incorrect = confident_incorrect_count / len(incorrect_prediction_probabilities)
-    confident_correct = confident_correct_count / len(correct_prediction_probabilities)
-
-    print("Amount of incorrect label probabilities with confidence over " + str(
-        confidence_level) + " : " + str(confident_incorrect_count) + "(" + str((confident_incorrect * 100)) + "%)")
-    print("Amount of correct label probabilities with confidence over " + str(
-        confidence_level) + " : " + str(confident_correct_count) + "(" + str((confident_correct * 100)) + "%)")
+    distribution_plot = sns.distplot(incorrect_prediction_probabilities, kde=False, rug=True, axlabel="Probability")
+    distribution_plot.set_title("Incorrectly labeled distribution")
+    store_figure(distribution_plot.get_figure(), classifier_name, RESULTS_GRAPH_FOLDER,
+                 INCORRECT_PREDICTION_DISTRIBUTION_PLOT_FILE_NAME)

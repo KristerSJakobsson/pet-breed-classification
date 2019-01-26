@@ -7,7 +7,7 @@ from keras.applications import inception_v3
 from keras.applications import xception
 from sklearn.linear_model import LogisticRegression
 
-from settings import LEARNER_CLASSIFIER_FILE_NAME, LEARNER_DATA_FILE_NAME
+from settings import TRAINING_CLASSIFIER_FILE_NAME, TRAINING_CLASSIFIER_DATA_FILE_NAME, DEFAULT_POOLING
 from .pretrained_classifier import PretrainedClassifier
 from .containers import ClassifierDetails, ClassifierResult
 from src.utils.io_utils import store_sklearn_classifier, load_sklearn_classifier, store_serializable_object, \
@@ -29,7 +29,7 @@ class ClassifierBase:
         if not exists(keras_models_dir):
             makedirs(keras_models_dir)
 
-        self._pooling = "avg"
+        self._pooling = DEFAULT_POOLING
         self._classifier_objects = None
 
         self._classifier_details = classifier_details
@@ -101,27 +101,29 @@ class NewClassifier(ClassifierBase):
         :param classifier_details: Object representing the classifier we want to use
         :param seed: The seed value for the logistic regression
         """
-        # Train learner
-        train_bottleneck_features = self._generate_bottleneck_features_for_classifiers(
+
+        trained_bottleneck_features = self._generate_bottleneck_features_for_classifiers(
             data=x_training, classifiers=self._classifier_objects)
 
         logistic_regression_classifier = LogisticRegression(multi_class='multinomial',
                                                             solver='lbfgs',
                                                             random_state=classifier_details.seed)
-        logistic_regression_classifier.fit(X=train_bottleneck_features,
-                                           y=(y_training * range(y_training.shape[1])).sum(axis=1))
+        number_of_classes = y_training.shape[1]
+        column_index_encoded_dataframe = y_training * range(number_of_classes)
+        logistic_regression_classifier.fit(X=trained_bottleneck_features,
+                                           y=column_index_encoded_dataframe.sum(axis=1))
 
         classifier_name = self._classifier_details.get_name()
 
         # Store logistic classifier
         store_sklearn_classifier(sklearn_classifier=logistic_regression_classifier,
                                  classifier_name=classifier_name,
-                                 filename=LEARNER_CLASSIFIER_FILE_NAME)
+                                 filename=TRAINING_CLASSIFIER_FILE_NAME)
 
         # Store classifier details
         store_serializable_object(serializable_object=classifier_details,
                                   classifier_name=classifier_name,
-                                  filename=LEARNER_DATA_FILE_NAME)
+                                  filename=TRAINING_CLASSIFIER_DATA_FILE_NAME)
 
 
 class ExistingClassifier(ClassifierBase):
@@ -136,11 +138,11 @@ class ExistingClassifier(ClassifierBase):
 
     def get_classifier_details(self, classifier_name: str) -> ClassifierDetails:
         return load_serializable_object(classifier_name=classifier_name,
-                                        filename=LEARNER_DATA_FILE_NAME)
+                                        filename=TRAINING_CLASSIFIER_DATA_FILE_NAME)
 
     def get_classifier_object(self) -> Any:
         return load_sklearn_classifier(classifier_name=self._classifier_details.get_name(),
-                                       filename=LEARNER_CLASSIFIER_FILE_NAME)
+                                       filename=TRAINING_CLASSIFIER_FILE_NAME)
 
     def apply_to_stored_learner(self, image_data: Any, image_list: List[str]) -> ClassifierResult:
         """

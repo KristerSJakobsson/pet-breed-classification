@@ -52,7 +52,7 @@ def load_all_image_data_for_breeds(breeds: List[str]) -> List[Image]:
     for path in breed_paths:
         breed_path = join(TRAIN_PATH, path)
         if isdir(breed_path) and EXTRACT_PATH_REGEX.match(path):
-            path_id, breed_name = split_path_name(path)
+            _, breed_name = split_path_name(path)
             if breed_name in breeds:
                 images_in_path = load_images_in_path(breed=breed_name, path=breed_path)
                 all_images.extend(images_in_path)

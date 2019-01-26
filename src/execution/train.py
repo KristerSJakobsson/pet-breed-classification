@@ -1,6 +1,6 @@
 from pandas import value_counts
 
-from settings import INPUT_SIZE
+from settings import INPUT_SIZE, TRAINING_BREED_DATA_PROPORTIONS_FILE_NAME, VALIDATION_DATA_FILE_NAME,RESULTS_GRAPH_FOLDER
 from src.models.data_wrangler import DataWrangler
 from src.models.logreg_classifier import NewClassifier
 from src.models.containers import ClassifierDetails
@@ -22,7 +22,7 @@ def train_classifier(classifier_details: ClassifierDetails):
     data_wrangler = DataWrangler(image_files=training_data)
     data_wrangler.seed = seed
     data_wrangler.image_input_size = INPUT_SIZE
-    data_wrangler.execute_load_training_data(shuffle=True,
+    data_wrangler.execute_load_training_data(shuffle=False,
                                              breeds_list=breeds_list)
 
     x_training_data = data_wrangler.x_data
@@ -52,10 +52,10 @@ def train_classifier(classifier_details: ClassifierDetails):
     # Store figure
     store_figure(figure=breeds_bar_figure,
                  classifier_name=classifier_name,
-                 image_folder="data",
-                 filename="breed_data_proportions.png")
+                 image_folder=RESULTS_GRAPH_FOLDER,
+                 filename=TRAINING_BREED_DATA_PROPORTIONS_FILE_NAME)
 
     # Store validation resources in classifier
     store_serializable_object(serializable_object=validation_data,
-                              filename="validation_data.json",
+                              filename=VALIDATION_DATA_FILE_NAME,
                               classifier_name=classifier_name)

@@ -73,5 +73,5 @@ This project is licensed under the Boost License - see the [license](LICENSE.md)
 
 * **Kaggle Dog Breed Identification Challenge** -  For giving me the original idea, and various contributers who shared ideas for solutions.
 [Original Challenge](https://www.kaggle.com/c/dog-breed-identification)
-* **Stanford Dogs Dataset** - For providing the data (Aditya Khosla, Nityananda Jayadevaprakash, Bangpeng Yao, and Fei-Fei Li)
-[Original Data](http://vision.stanford.edu/aditya86/ImageNetDogs/)
+* **Stanford Dogs Dataset** - For providing dog breed data (Aditya Khosla, Nityananda Jayadevaprakash, Bangpeng Yao, and Fei-Fei Li) [Original Data](http://vision.stanford.edu/aditya86/ImageNetDogs/)
+* **Oxford-IIIT Pet Dataset** - For providing dog breed and cat breed data (Omkar M Parkhi and Andrea Vedaldi, and Andrew Zisserman and C. V. Jawahar) [Original data](http://www.robots.ox.ac.uk/~vgg/data/pets/)
