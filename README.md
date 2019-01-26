@@ -38,7 +38,7 @@ Note: For tensorflow GPU support, change tensorflow to tensorflow-gpu in require
 ### Prerequisites
 
 Needs Tensorflow and several other libraries,
-please see requirements.
+please run pip install requirements.txt
 It runs on Windows, Linux and MacOS.
 
 ## Running the tests

@@ -40,7 +40,7 @@ def validate_classifier(classifier_details: ClassifierDetails):
     y_validation_data = data_wrangler.y_data
     validation_labels = data_wrangler.file_labels
 
-    classifier_result = machine_learner.apply_to_stored_learner(x_validation_data, validation_labels)
+    classifier_result = machine_learner.apply_to_stored_classifier(x_validation_data, validation_labels)
 
     store_predictions(classifier_name, classifier_result)
     store_probabilities(classifier_name, classifier_result)

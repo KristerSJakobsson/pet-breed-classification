@@ -25,12 +25,14 @@ class ClassifierDetails(object):
         self.training_proportion = training_proportion
 
     def get_name(self) -> str:
-        return classifier_list_to_text(self.training_classifiers) + CLASSIFIER_LIST_SEPERATOR + "classifier" + CLASSIFIER_LIST_SEPERATOR + str(
+        return classifier_list_to_text(
+            self.training_classifiers) + CLASSIFIER_LIST_SEPERATOR + "classifier" + CLASSIFIER_LIST_SEPERATOR + str(
             self.seed) + CLASSIFIER_LIST_SEPERATOR + str(self.training_proportion)
 
 
 class ClassifierResult(object):
-    def __init__(self, probability: ndarray, prediction: ndarray, image_list: List[str], classifier_details: ClassifierDetails):
+    def __init__(self, probability: ndarray, prediction: ndarray, image_list: List[str],
+                 classifier_details: ClassifierDetails):
         self._prediction = prediction
         self._probability = probability
         self._classifier_details = classifier_details
@@ -76,7 +78,7 @@ class ClassifierResult(object):
             selected_probability.append(self._probability[index, breed_value])
 
         selection_results = DataFrame(data=transpose([selected_breed, selected_probability]),
-                                         columns=["prediction", "probability"],
-                                         index=image_list)
+                                      columns=["prediction", "probability"],
+                                      index=image_list)
         selection_results.rename_axis("filename")
         return selection_results

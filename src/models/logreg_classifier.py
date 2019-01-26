@@ -144,11 +144,11 @@ class ExistingClassifier(ClassifierBase):
         return load_sklearn_classifier(classifier_name=self._classifier_details.get_name(),
                                        filename=TRAINING_CLASSIFIER_FILE_NAME)
 
-    def apply_to_stored_learner(self, image_data: Any, image_list: List[str]) -> ClassifierResult:
+    def apply_to_stored_classifier(self, image_data: Any, images: List[str]) -> ClassifierResult:
         """
         Loads stored classifier and applies it to image data
         :param image_data: The matrix representation of the data
-        :param image_list: A list of the names for the images in image_data
+        :param images: A list of the names for the images in image_data
         :return: The result of the classification
         """
         # Retrieve the stored logreg
@@ -162,4 +162,4 @@ class ExistingClassifier(ClassifierBase):
         prediction = logreg.predict(data_bottlenect_features)
         probabilities = logreg.predict_proba(data_bottlenect_features)
 
-        return ClassifierResult(probabilities, prediction, image_list, self._classifier_details)
+        return ClassifierResult(probabilities, prediction, images, self._classifier_details)

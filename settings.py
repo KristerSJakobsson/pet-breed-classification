@@ -28,6 +28,9 @@ VALIDATION_ANSWERS_FILE_NAME = 'validation_answers.csv'
 VALIDATION_METRICS_FILE_NAME = 'validation_metrics.csv'
 VALIDATION_MATCHING_DATA_FILE_NAME = 'validation_matching_data.csv'
 
+ANALYSE_PREDICTIONS_FILE_NAME = 'analyse_predictions.csv'
+ANALYSE_PROBABILITIES_FILE_NAME = 'analyse_probabilities.csv'
+
 TRAINING_BREED_DATA_PROPORTIONS_FILE_NAME= 'breed_data_proportions.png'
 CORRECT_PREDICTION_DISTRIBUTION_PLOT_FILE_NAME = "correct_prediction_distribution_plot.png"
 INCORRECT_PREDICTION_HEATMAP_PLOT_FILE_NAME = "incorrect_prediction_heatmap.png"
