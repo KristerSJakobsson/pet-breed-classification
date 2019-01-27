@@ -43,11 +43,12 @@ Note: For tensorflow GPU support, change tensorflow to tensorflow-gpu in require
 Needs Tensorflow and several other libraries,
 please run pip install requirements.txt
 It runs on Windows, Linux and MacOS.
+Note that training on the full data will take a long time without GPU.
 
 ## Running the tests
 
-This project currently has no tests...
-This is on my TODO list.
+This project currently has only a few tests...
+Adding tests is high on my TODO list.
 
 ## Built With
 
@@ -66,7 +67,7 @@ Just to mention a few, see requirements.py for all libraries.
 
 ## Authors
 
-* **Krister S Jakobsson** - *Implementation*
+* **Krister S Jakobsson** - *Implementation and pretty much everything else*
 
 ## License
 
