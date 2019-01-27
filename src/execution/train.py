@@ -14,9 +14,14 @@ def train_classifier(classifier_details: ClassifierDetails):
     seed = classifier_details.seed
     training_proportion = classifier_details.training_proportion
     breeds_list = classifier_details.training_breed_names
+    image_sources = classifier_details.image_sources
 
     # Read stanford train resources
-    training_data, validation_data = load_data_and_split_for_training_validating(breeds_list, training_proportion, seed)
+    training_data, validation_data = load_data_and_split_for_training_validating(
+        image_sources=image_sources,
+        load_for_breeds=breeds_list,
+        training_proportion=training_proportion,
+        seed=seed)
 
     # Pre-process resources (randomize order, load images, store in numpy arrays)
     data_wrangler = DataWrangler(image_files=training_data)
@@ -39,7 +44,8 @@ def train_classifier(classifier_details: ClassifierDetails):
     machine_learner = NewClassifier(breed_names=breeds_list,
                                     training_classifiers=classifiers,
                                     seed=seed,
-                                    training_proportion=training_proportion)
+                                    training_proportion=training_proportion,
+                                    image_sources=image_sources)
 
     # Train classifier
     machine_learner.train_and_store_classifier(

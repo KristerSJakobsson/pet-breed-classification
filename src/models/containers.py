@@ -2,32 +2,34 @@ from typing import List
 
 from numpy import ndarray, transpose
 from pandas import DataFrame
-from settings import CLASSIFIER_LIST_SEPERATOR
+from settings import PARAMETER_LIST_SEPERATOR
 
-from src.utils.classifier_utils import classifier_list_to_text
-from .pretrained_classifier import PretrainedClassifier
+from src.utils.classifier_setting_utils import classifier_type_list_to_text
+from .classifier_settings import PretrainedClassifier, ImageSource
 
 
 # Warning: This class inherits from object, if you do not specify this jsonpickle might fail
 class ClassifierDetails(object):
     def __init__(self, breed_names: List[str], training_classifier: List[PretrainedClassifier], seed: int,
-                 training_proportion: float):
+                 training_proportion: float, image_sources: List[ImageSource]):
         """
         Details of a classifier
-        :param breed_names:
-        :param training_classifier:
-        :param seed:
-        :param training_proportion:
+        :param breed_names: List of breed names
+        :param training_classifier: List of training classifiers
+        :param seed: A seed to use throughout the program
+        :param training_proportion: Proportion of data to use in training (remaining is used forvalidation)
+        :param image_sources: List of image sources (to load image data from)
         """
         self.training_breed_names = breed_names
         self.training_classifiers = training_classifier
         self.seed = seed
         self.training_proportion = training_proportion
+        self.image_sources = image_sources
 
     def get_name(self) -> str:
-        return classifier_list_to_text(
-            self.training_classifiers) + CLASSIFIER_LIST_SEPERATOR + "classifier" + CLASSIFIER_LIST_SEPERATOR + str(
-            self.seed) + CLASSIFIER_LIST_SEPERATOR + str(self.training_proportion)
+        return classifier_type_list_to_text(
+            self.training_classifiers) + PARAMETER_LIST_SEPERATOR + "classifier" + PARAMETER_LIST_SEPERATOR + str(
+            self.seed) + PARAMETER_LIST_SEPERATOR + str(self.training_proportion)
 
 
 class ClassifierResult(object):

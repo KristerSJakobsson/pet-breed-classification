@@ -1,12 +1,13 @@
 from os.path import join
 
-from src.models.pretrained_classifier import PretrainedClassifier
+from src.models.classifier_settings import PretrainedClassifier, ImageSource
 
 # Program
 DEFAULT_TRAINING_PROPORTION = 0.8
 DEFAULT_SEED = 46546
 DEFAULT_CLASSIFIER = [PretrainedClassifier.XCEPTION]
-CLASSIFIER_LIST_SEPERATOR = '_'
+DEFAULT_IMAGE_SOURCE = [ImageSource.STANFORD]
+PARAMETER_LIST_SEPERATOR = '_'
 
 # Classifiers
 INPUT_SIZE = 299  # The size of the images for learning, is decided by the classifier you use
@@ -31,7 +32,7 @@ VALIDATION_MATCHING_DATA_FILE_NAME = 'validation_matching_data.csv'
 ANALYSE_PREDICTIONS_FILE_NAME = 'analyse_predictions.csv'
 ANALYSE_PROBABILITIES_FILE_NAME = 'analyse_probabilities.csv'
 
-TRAINING_BREED_DATA_PROPORTIONS_FILE_NAME= 'breed_data_proportions.png'
+TRAINING_BREED_DATA_PROPORTIONS_FILE_NAME = 'breed_data_proportions.png'
 CORRECT_PREDICTION_DISTRIBUTION_PLOT_FILE_NAME = "correct_prediction_distribution_plot.png"
 INCORRECT_PREDICTION_HEATMAP_PLOT_FILE_NAME = "incorrect_prediction_heatmap.png"
 INCORRECT_PREDICTION_CLUSTERMAP_PLOT_FILE_NAME = "incorrect_prediction_clustermap.png"

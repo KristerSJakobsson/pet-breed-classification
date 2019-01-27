@@ -1,6 +1,7 @@
 from os import makedirs
 from os.path import join, exists, isdir, isfile
 from typing import Any
+import mimetypes as mt
 
 import jsonpickle
 from pandas import DataFrame, read_csv
@@ -15,6 +16,17 @@ def is_directory(path: str):
 
 def is_file(path: str):
     return isfile(path)
+
+
+def is_image_file(file_path: str) -> bool:
+    if is_file(file_path):
+        file_type, image_encoding = mt.guess_type(file_path)
+        if file_type is not None and file_type.startswith("image/"):
+            return True
+        else:
+            return False
+    else:
+        raise FileNotFoundError("The following path is not a file: " + file_path)
 
 
 def create_directory_if_not_exists(path: str):

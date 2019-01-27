@@ -12,7 +12,10 @@ Running this program on all data might be quite slow, consider tweaking the trai
 
 The executable scripts are per below:
 
-* **tools/download_stanford_dog_data.py** - Download Stanford Dog Data<br>
+* **tools/download_stanford_dog_data.py** - Download Stanford Dog Data (~ 750 MB)<br>
+Run this to download the data, extract it and store it for usage.<br>
+
+* **tools/download_oxford_cat_dog_data.py** - Download Oxford-IIIT Pet Dataset (~ 800 MB)<br>
 Run this to download the data, extract it and store it for usage.<br>
 
 * **scripts/train_classifier.py** - Train a classifier with set parameters and store it for reuse.<br>

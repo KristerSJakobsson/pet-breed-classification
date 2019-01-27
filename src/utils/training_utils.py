@@ -5,17 +5,19 @@ from os.path import isdir, join
 from typing import List, Tuple
 
 from settings import DEFAULT_SEED
-from definitions import TRAIN_PATH
 
 from src.models.image import Image
-from src.utils.image_utils import is_image_file
+from src.models.classifier_settings import ImageSource
+from src.utils.io_utils import is_image_file
+from src.utils.list_utils import extract_unique_values
 
 EXTRACT_PATH_REGEX = re.compile(
     r'^((?P<id>\w+)-(?P<breed>\w+))$',
     re.IGNORECASE)
 
 
-def load_data_and_split_for_training_validating(load_for_breeds: List[str],
+def load_data_and_split_for_training_validating(image_sources: List[ImageSource],
+                                                load_for_breeds: List[str],
                                                 training_proportion: float,
                                                 seed: int = None) -> Tuple[List[Image], List[Image]]:
     """
@@ -25,7 +27,11 @@ def load_data_and_split_for_training_validating(load_for_breeds: List[str],
     :param seed: A seed value for shuffling the image data, if None it defaults to DEFAULT_SEED
     :return: A tuple with a list of training data and validation data respectively
     """
-    all_images = load_all_image_data_for_breeds(load_for_breeds)
+    all_images = []
+
+    for image_source in image_sources:
+        data_from_images = load_all_image_data_for_breeds(image_source, load_for_breeds)
+        all_images.extend(data_from_images)
 
     if training_proportion == 1:
         return all_images, []
@@ -41,16 +47,18 @@ def load_data_and_split_for_training_validating(load_for_breeds: List[str],
     return all_images[:training_image_count], all_images[training_image_count:]
 
 
-def load_all_image_data_for_breeds(breeds: List[str]) -> List[Image]:
+def load_all_image_data_for_breeds(image_source: ImageSource, breeds: List[str]) -> List[Image]:
     """
     Loads all breed images by loading images from each subdirectory separately
+    :param image_source: Source for images
     :param breeds: List of breeds to load
     :return: A list of Image objects
     """
     all_images = []
-    breed_paths = listdir(TRAIN_PATH)
+    train_path = image_source.getResourceFolder()
+    breed_paths = listdir(train_path)
     for path in breed_paths:
-        breed_path = join(TRAIN_PATH, path)
+        breed_path = join(train_path, path)
         if isdir(breed_path) and EXTRACT_PATH_REGEX.match(path):
             _, breed_name = split_path_name(path)
             if breed_name in breeds:
@@ -77,18 +85,20 @@ def load_images_in_path(breed: str, path: str) -> List[Image]:
     return images
 
 
-def load_breeds() -> List[str]:
+def load_breeds(image_sources: List[ImageSource]) -> List[str]:
     """
     Loads breeds from path with a pre-compiled regex.
+    :param image_sources:
     :return: A list of breeds
     """
     breeds = []
-    breed_paths = listdir(TRAIN_PATH)
-    for path in breed_paths:
-        if isdir(join(TRAIN_PATH, path)) and EXTRACT_PATH_REGEX.match(path):
-            _, path_breed = split_path_name(path)
-            breeds.append(path_breed)
-    return breeds
+    for image_source in [path.getResourceFolder() for path in image_sources]:
+        breed_paths = listdir(image_source)
+        for path in breed_paths:
+            if isdir(join(image_source, path)) and EXTRACT_PATH_REGEX.match(path):
+                _, path_breed = split_path_name(path)
+                breeds.append(path_breed)
+    return extract_unique_values(breeds)
 
 
 def split_path_name(path_name: str) -> Tuple[str, str]:

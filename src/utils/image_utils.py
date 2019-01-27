@@ -1,4 +1,3 @@
-import mimetypes as mt
 from typing import Tuple, Any, List
 
 import matplotlib.pyplot as plt
@@ -8,8 +7,6 @@ from keras.applications import xception
 from keras.preprocessing import image
 from numpy import ndarray
 from tqdm import tqdm
-
-from .io_utils import is_file
 
 
 def load_and_preprocess_image(path: str, size: Tuple[int, int]) -> ndarray:
@@ -65,18 +62,6 @@ def preprocess_image(image_data: ndarray) -> Any:
     :return: Returns preprocessed images for use with Keras
     """
     return xception.preprocess_input(expand_dims(image_data.copy(), axis=0))
-
-
-def is_image_file(file_path: str) -> bool:
-    if is_file(file_path):
-        file_type, image_encoding = mt.guess_type(file_path)
-        if file_type is not None and file_type.startswith("image/"):
-            return True
-        else:
-            return False
-    else:
-        raise FileNotFoundError("The following path is not a file: " + file_path)
-
 
 def create_image_figure(image_path: str,
                         predicted_breed: str,

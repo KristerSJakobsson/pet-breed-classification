@@ -10,5 +10,5 @@ CLASSIFIERS_PATH = join(OUTPUT_PATH, "classifiers")
 TEST_PATH = join(OUTPUT_PATH, "tests")
 TEST_DATA_PATH = join(OUTPUT_PATH, "dummy_data")
 
-TRAIN_PATH_FOLDER_NAME = "image_data"
-TRAIN_PATH = join(RESOURCES_PATH, TRAIN_PATH_FOLDER_NAME)
+OXFORD_IMAGE_DATA_FOLDER_NAME = "image_data_oxford"
+STANFORD_IMAGE_DATA_FOLDER_NAME = "image_data_stanford"

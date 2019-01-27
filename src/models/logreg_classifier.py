@@ -8,7 +8,7 @@ from keras.applications import xception
 from sklearn.linear_model import LogisticRegression
 
 from settings import TRAINING_CLASSIFIER_FILE_NAME, TRAINING_CLASSIFIER_DATA_FILE_NAME, DEFAULT_POOLING
-from .pretrained_classifier import PretrainedClassifier
+from .classifier_settings import PretrainedClassifier, ImageSource
 from .containers import ClassifierDetails, ClassifierResult
 from src.utils.io_utils import store_sklearn_classifier, load_sklearn_classifier, store_serializable_object, \
     load_serializable_object
@@ -81,15 +81,16 @@ class ClassifierBase:
 
 class NewClassifier(ClassifierBase):
     def __init__(self, breed_names: List[str], training_classifiers: List[PretrainedClassifier], seed: int,
-                 training_proportion: float):
+                 training_proportion: float, image_sources: List[ImageSource]):
         """
         Creates a classifier that does not already exist. (it needs to be trained)
         :param breed_names: List of breed names
         :param training_classifiers: Represents a list of pretrained classifiers used internally
         :param seed: The seed value for the classifier
         :param training_proportion: The proportion of data used to train
+        :param image_sources: Image sources for classifier
         """
-        classifier_details = ClassifierDetails(breed_names, training_classifiers, seed, training_proportion)
+        classifier_details = ClassifierDetails(breed_names, training_classifiers, seed, training_proportion, image_sources)
         super().__init__(classifier_details)
 
     def train_and_store_classifier(self, x_training: ndarray, y_training: ndarray,

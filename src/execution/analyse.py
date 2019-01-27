@@ -6,9 +6,9 @@ import matplotlib.pyplot as plt
 from settings import INPUT_SIZE, ANALYSE_PREDICTIONS_FILE_NAME, ANALYSE_PROBABILITIES_FILE_NAME
 from src.models.logreg_classifier import ExistingClassifier
 from src.models.containers import ClassifierDetails
-from src.utils.image_utils import load_and_preprocess_multiple_images, load_and_preprocess_image, is_image_file, \
+from src.utils.image_utils import load_and_preprocess_multiple_images, load_and_preprocess_image, \
     create_image_figure
-from src.utils.io_utils import is_directory, store_dataframe, store_figure
+from src.utils.io_utils import is_directory, is_image_file, store_dataframe, store_figure
 
 
 def analyse_image(image_path: str, classifier_details: ClassifierDetails):
