@@ -7,8 +7,8 @@ CLASS_PATH = join(ROOT_DIR, "classes")
 RESOURCES_PATH = join(ROOT_DIR, "resources")
 OUTPUT_PATH = join(ROOT_DIR, "output")
 CLASSIFIERS_PATH = join(OUTPUT_PATH, "classifiers")
-TEST_PATH = join(OUTPUT_PATH, "tests")
-TEST_DATA_PATH = join(OUTPUT_PATH, "dummy_data")
+TEST_PATH = join(ROOT_DIR, "tests")
+TEST_DATA_PATH = join(TEST_PATH, "dummy_data")
 
 OXFORD_IMAGE_DATA_FOLDER_NAME = "image_data_oxford"
 STANFORD_IMAGE_DATA_FOLDER_NAME = "image_data_stanford"
