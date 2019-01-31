@@ -22,16 +22,16 @@ Run this to download the data, extract it and store it for usage.<br>
 Classifiers are stored in output/classifiers/[classifier_name].<br>
 Warning: Depending on your computer, this may take a while.<br>
 
-* **scripts/validate_classifier.py** - Validate the trained classifier. <br>
-For this to be executable, the training_proportion of the specified classifier must be strictly less than 1 and low enough that at least one picture remains in the training set.
-
-* **scripts/analyse_classifier.py** - Apply classifier to a file or folder and store results. <br>
+* **scripts/use_classifier.py** - Apply classifier to a file or folder and store results. <br>
 Can only be used if the classifier has training proportion set to <1. <br> 
 Results are stored in output/classifiers/[classifier_name].<br>
 Warning: Depending on your computer, this may take a while.<br>
 Run with -h or --help for all arguments and parameters.
 
-* **scripts/plot_analyser_results.py** - Use stored evaluation result and generate plots. <br>
+* **scripts/validate_classifier.py** - Validate the trained classifier. <br>
+For this to be executable, the training_proportion of the specified classifier must be strictly less than 1 and low enough that at least one picture remains in the training set.
+
+* **scripts/validate_plot_results.py** - Use stored evaluation result and generate plots. <br>
 Results are stored in output/classifiers/[classifier_name].<br>
 Run with -h or --help for all arguments and parameters.
 
