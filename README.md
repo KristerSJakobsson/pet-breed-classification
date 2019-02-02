@@ -1,6 +1,10 @@
 # Pet Breed Classifier
 
-Ever wondered what dog breed you resemble the most?<br>
+Ever wondered what pet breed is in a picture?<br>
+Then this tool might be of help to you. <br>
+What breeds can be detected depend on training data-set, <br> 
+currently the Stanford data contains 120 breeds of dogs and the Oxford data set 25 breeds of dogs and 12 breds of cats. <br>
+<br>
 This is a Python implementation of a pet breed classifier.
 It uses transfer learning from Deep Neural Networks that were trained on Imagenet.
 A logistic regression is used to map the final layer.
@@ -9,6 +13,11 @@ The model can be set to use xception, inception or both for generating bottlenec
 Running this program on all data might be quite slow, consider tweaking the training proportion parameter when running.
 
 ## Getting Started
+
+I recommend setting up a project in PyCharm and pulling the sources from git.
+Run 'pip install requirements.txt' to install all required packages.
+Go to Edit Configurations in PyCharm and specify the below scripts.
+(PyCharm will add the project root to PYTHONPATH, otherwise you will have to do this manually.)
 
 The executable scripts are per below:
 
@@ -31,12 +40,12 @@ Run with -h or --help for all arguments and parameters.
 * **scripts/validate_classifier.py** - Validate the trained classifier. <br>
 For this to be executable, the training_proportion of the specified classifier must be strictly less than 1 and low enough that at least one picture remains in the training set.
 
-* **scripts/validate_plot_results.py** - Use stored evaluation result and generate plots. <br>
+* **scripts/validate_plot_results.py** - Use stored evaluation result and generate plots (distribution plot, clustermap and heatmap). <br>
 Results are stored in output/classifiers/[classifier_name].<br>
 Run with -h or --help for all arguments and parameters.
 
-
-Note: For tensorflow GPU support, change tensorflow to tensorflow-gpu in requirements.txt
+Note 1: The above scripts require parameters on execution. Please supply the same parameters when you train and use the same classifier.
+Note 2: For Tensorflow GPU support, change tensorflow to tensorflow-gpu in requirements.txt. Without it, classification can be quite slow.
 
 ### Prerequisites
 
@@ -44,11 +53,6 @@ Needs Tensorflow and several other libraries,
 please run pip install requirements.txt
 It runs on Windows, Linux and MacOS.
 Note that training on the full data will take a long time without GPU.
-
-## Running the tests
-
-This project currently has only a few tests...
-Adding tests is high on my TODO list.
 
 ## Built With
 
